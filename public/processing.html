@@ -91,13 +91,13 @@
     border-bottom: 1px solid var(--amz-border-soft);
   }
   .sender-brand {
-    display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
   }
-  .sender-brand .brand-mark {
-    width: 36px; height: 36px; border-radius: 10px;
-    background: linear-gradient(135deg, var(--amz-orange), var(--amz-orange-hover));
-    color: var(--amz-ink); display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: 800;
+  .sender-brand .brand-logo {
+    width: 42px; height: 42px; border-radius: 10px;
+    object-fit: contain;
+    background: #131921;
+    padding: 4px;
   }
   .sender-brand .brand-name { font-size: 15px; font-weight: 800; color: var(--amz-ink); }
   .sender-brand .brand-sub { font-size: 10px; color: var(--amz-muted); }
@@ -135,17 +135,13 @@
     border-top: 3px solid var(--stanbic-blue);
   }
   .recipient-brand {
-    display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
   }
-  .recipient-brand .bank-logo {
-    width: 40px; height: 40px; border-radius: 8px;
-    background: #FFFFFF; border: 1.5px solid var(--stanbic-blue);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--stanbic-blue-dark); font-weight: 800; font-size: 11px; letter-spacing: -0.5px;
-    box-shadow: 0 2px 6px rgba(26,115,232,0.15);
+  .recipient-brand .bank-logo-img {
+    height: 36px; width: auto;
+    object-fit: contain;
   }
-  .recipient-brand .bank-name { font-size: 16px; font-weight: 800; color: var(--stanbic-blue-dark); letter-spacing: -0.3px; }
-  .recipient-brand .bank-sub { font-size: 10px; color: var(--amz-muted); font-weight: 500; }
+  /* Removed .bank-name and .bank-sub to avoid repetition */
 
   .recipient-section .info-row .k { color: #4A5568; }
   .recipient-section .info-row .v { color: var(--stanbic-blue-dark); }
@@ -348,7 +344,7 @@
       <!-- Sender: Amazon Bank -->
       <div class="sender-section">
         <div class="sender-brand">
-          <div class="brand-mark">AB</div>
+          <img class="brand-logo" src="https://i.ibb.co/6PZ5v4F/amazon-bank-logo.jpg" alt="Amazon Bank">
           <div>
             <div class="brand-name">Amazon Bank</div>
             <div class="brand-sub">Sender account</div>
@@ -373,11 +369,7 @@
       <!-- Recipient: Stanbic Bank -->
       <div class="recipient-section">
         <div class="recipient-brand">
-          <div class="bank-logo">STANBIC</div>
-          <div>
-            <div class="bank-name">Stanbic Bank</div>
-            <div class="bank-sub">Recipient details</div>
-          </div>
+          <img class="bank-logo-img" src="https://i.ibb.co/680sL7z/stanbic-bank-logo.png" alt="Stanbic Bank">
         </div>
         <div class="info-row">
           <span class="k">Recipient</span>
